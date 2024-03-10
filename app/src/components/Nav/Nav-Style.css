@@ -1,0 +1,34 @@
+.barra_nav {
+    display: flex;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.barra_nav_lista {
+    align-items: center;
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin: 0;
+    font-size: 17px;
+}
+
+.barra_nav_item {
+    margin: 1em;
+}
+
+#franca {
+    font-family: 'Nothing You Could Do', cursive;
+    font-size: 25px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+#logo {
+    width: 60px;
+}
