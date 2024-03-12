@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import ProductsModal from '../Modal/ProductsModal';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -43,6 +44,7 @@ const rows = [
 export function TableProducts() {
   return (
     <Box sx={{ height: 400, width: '100%' }}>
+      <ProductsModal/>
       <DataGrid
         rows={rows}
         columns={columns}
