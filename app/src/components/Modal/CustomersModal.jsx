@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -19,28 +19,27 @@ const style = {
 
 export default function CustomersModal() {
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   // Estados para armazenar os valores do formulário
-  const [formData, setFormData] = React.useState({
-    nome: '',
+  const [formData, setFormData] = useState({
+    name: '',
     email: '',
-    celular: '',
+    phoneNumber: '', // Renomeado de 'celular' para 'phoneNumber'
     cpf: '',
   });
 
   // Função para lidar com a alteração nos campos do formulário
   const handleInputChange = (event) => {
-    const { nome, value } = event.target;
-    setFormData({ ...formData, [nome]: value });
+    const { name, value } = event.target; // Nome corrigido aqui
+    setFormData({ ...formData, [name]: value }); // Nome corrigido aqui
   };
 
   // Função para lidar com o envio do formulário
   const handleSubmit = () => {
-    // Aqui você pode realizar a lógica necessária com os dados do formulário
-    console.log('Formulário enviado:', formData);
+    // Chama a função saveData do contexto Firebase e passa os dados do formulário
 
     // Fechar o modal após o envio do formulário
     handleClose();
@@ -80,7 +79,7 @@ export default function CustomersModal() {
               margin="normal"
             />
             <TextField
-              label="Número de telefone"
+              label="Número de celular"
               variant="outlined"
               name="phoneNumber"
               value={formData.phoneNumber}
