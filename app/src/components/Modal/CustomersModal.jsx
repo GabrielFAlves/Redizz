@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
+import { useFirebase } from '../../context/firebase.context';
 
 const style = {
   position: 'absolute',
@@ -19,12 +20,15 @@ const style = {
 
 export default function CustomersModal() {
 
+  const {setCustomer} = useFirebase()
+
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   // Estados para armazenar os valores do formulário
   const [formData, setFormData] = useState({
+    id: parseInt(Math.random()*10).toFixed(0),
     name: '',
     email: '',
     phoneNumber: '', // Renomeado de 'celular' para 'phoneNumber'
@@ -40,6 +44,7 @@ export default function CustomersModal() {
   // Função para lidar com o envio do formulário
   const handleSubmit = () => {
     // Chama a função saveData do contexto Firebase e passa os dados do formulário
+    setCustomer(formData)
 
     // Fechar o modal após o envio do formulário
     handleClose();

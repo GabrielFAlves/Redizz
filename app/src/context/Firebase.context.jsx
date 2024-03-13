@@ -6,9 +6,11 @@ const FirebaseContext = createContext({})
 FirebaseContext.displayName = 'FirebaseContext';
 
 const FirebaseProvider = ({children}) => {
+
+    const customersCol = collection(db, 'Customers');
+
     async function getCustomers() {
         try {
-            const customersCol = collection(db, 'Customers');
             console.log(customersCol);
             const customerSnapshot = await getDocs(customersCol);
             const customersList = customerSnapshot.docs.map(doc => doc.data());
@@ -19,14 +21,53 @@ const FirebaseProvider = ({children}) => {
         }
     }
 
+    async function setCustomer(user) {
+        try {
+            return await addDoc(customersCol, user)
+        } catch (error) {
+            console.error('Erro ao cadastrar clientes:', error);
+            throw error;
+        }
+    }
+
+    async function updateCustomer() {
+        try {
+
+        } catch (error) {
+            console.error('Erro ao cadastrar clientes:', error);
+            throw error;
+        }
+    }
+
+    async function deleteCustomer(customerIds) {
+        try {
+            for (let i = 0; i < customerIds.length; i++) {
+                const customerId = customerIds[i];
+                const q = query(collection(db, 'Customers'), where('id', '==', customerId)); // Consulta para encontrar documentos com o ID correspondente
+                const querySnapshot = await getDocs(q);
+                
+                querySnapshot.forEach(async (doc) => {
+                  await deleteDoc(doc.ref);
+                  console.log(`Cliente com ID ${customerId} excluído com sucesso.`);
+                });
+            }
+            
+        } catch (error) {
+            console.error('Erro ao cadastrar clientes:', error);
+            throw error;
+        }
+    }
+
     return (
         <FirebaseContext.Provider value={{
-          getCustomers
+          getCustomers,
+          setCustomer,
+          updateCustomer,
+          deleteCustomer
             }}>
             {children}
         </FirebaseContext.Provider>
     )
-
 }
 
 export const useFirebase = () => {

@@ -15,16 +15,15 @@ const columns = [
 ];
 
 export function TableCustomers() {
-
-  async function fetchData() {
-    const customers = await getCustomers(); // Passando a referência do banco de dados Firestore como argumento
-    setRows(customers);
-    console.log(customers);
-  }
-
+  const [selectedRows, setSelectedRows] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [rows, setRows] = useState([]);
-  const {getCustomers} = useFirebase()
+  const { getCustomers, deleteCustomer } = useFirebase();
+
+  async function fetchData() {
+    const customers = await getCustomers();
+    setRows(customers);
+  }
 
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
@@ -38,7 +37,12 @@ export function TableCustomers() {
 
   useEffect(() => {
     fetchData();
-  }, []); // Empty dependency array to run once when the component mounts
+  }, []); 
+
+  const handleDeleteSelected = async () => {
+    await deleteCustomer(selectedRows)
+    console.log("Linhas selecionadas:", selectedRows);
+  };
 
   return (
     <Box sx={{ height: 400, width: '100%' }}>
@@ -50,7 +54,7 @@ export function TableCustomers() {
         margin="normal"
       />
       <CustomersModal/>
-      <Button variant="contained">
+      <Button variant="contained" onClick={handleDeleteSelected}>
         Delete Selected
       </Button>
       <DataGrid
@@ -58,8 +62,13 @@ export function TableCustomers() {
         columns={columns}
         pageSize={5}
         checkboxSelection
-        disableRowSelectionOnClick
+        disableSelectionOnClick // Use essa propriedade ao invés de disableRowSelectionOnClick
+        onRowSelectionModelChange={(newSelection) => {
+          setSelectedRows(newSelection);
+          console.log(newSelection);
+        }}
       />
+
     </Box>
   );
 }
