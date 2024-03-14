@@ -20,7 +20,7 @@ const style = {
 
 export default function ProductsModal() {
 
-  const {setProduct} = useFirebase()
+  const {setProduct, fetchDataProducts} = useFirebase()
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -28,7 +28,7 @@ export default function ProductsModal() {
 
   // Estados para armazenar os valores do formulário
   const [formData, setFormData] = useState({
-    id: parseInt(Math.random()*10).toFixed(0),
+    id: Math.floor(Math.random() * 1001),
     productName: '',
     category: '',
     value: '',
@@ -42,9 +42,18 @@ export default function ProductsModal() {
   };
 
   // Função para lidar com o envio do formulário
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Aqui você pode realizar a lógica necessária com os dados do formulário
-    setProduct(formData)
+    await setProduct(formData).then(async() => {
+      await fetchDataProducts()
+      setFormData({
+        id: Math.floor(Math.random() * 1001),
+        productName: '',
+        category: '',
+        value: '',
+        quantity: '',
+      })
+    })
 
     // Fechar o modal após o envio do formulário
     handleClose();

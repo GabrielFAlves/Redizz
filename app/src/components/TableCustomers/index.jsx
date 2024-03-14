@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomersModal from '../Modal/CustomersSetModal';
 import Button from '@mui/material/Button';
-
 import { useFirebase } from '../../context/firebase.context';
 import CustomerUpdateModal from '../Modal/CustomerUpdateModal';
 
@@ -14,16 +13,6 @@ export function TableCustomers() {
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const { getCustomers, deleteCustomer, updateCustomer, rows, setRows, fetchData } = useFirebase();
   
-  const handleSearchChange = (event) => {
-    setSearchValue(event.target.value);
-    const filteredRows = rows.filter((row) =>
-      Object.values(row).some((value) =>
-        value.toString().toLowerCase().includes(event.target.value.toLowerCase())
-      )
-    );
-    setRows(filteredRows);
-  };
-
   const handleOpenUpdateModal = (customerId) => {
     setSelectedCustomerId(customerId);
   };

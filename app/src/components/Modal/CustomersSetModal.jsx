@@ -28,7 +28,7 @@ export default function CustomersModal() {
 
   // Estados para armazenar os valores do formulário
   const [formData, setFormData] = useState({
-    id: parseInt(Math.random()*10).toFixed(0),
+    id: Math.floor(Math.random() * 1001),
     name: '',
     email: '',
     phoneNumber: '', // Renomeado de 'celular' para 'phoneNumber'
@@ -46,6 +46,13 @@ export default function CustomersModal() {
     
     await setCustomer(formData).then(async() => {
       await fetchData()
+      setFormData({
+        id: Math.floor(Math.random() * 1001),
+        name: '',
+        email: '',
+        phoneNumber: '', // Renomeado de 'celular' para 'phoneNumber'
+        cpf: '',
+      })
     })
 
     // Fechar o modal após o envio do formulário

@@ -3,57 +3,59 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import SalesModal from '../Modal/SalesSetModal';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import { useFirebase } from '../../context/firebase.context';
-
-const columns = [
-  { field: 'id', headerName: 'ID', width: 90 },
-  { field: 'clientName', headerName: 'Cliente', width: 150, editable: true },
-  { field: 'productName', headerName: 'Produto', width: 150, editable: true },
-  { field: 'date', headerName: 'Data', width: 110, editable: true },
-  { field: 'totalAmount', headerName: 'Valor total', width: 110, editable: true },
-];
+import {SaleUpdateModal} from '../Modal/SaleUpdateModal'
 
 export function TableSales() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchValue, setSearchValue] = useState('');
-  const [rows, setRows] = useState([]);
-  const { getSales, deleteSale } = useFirebase();
 
-  async function fetchData() {
-    const sales = await getSales();
-    setRows(sales);
-  }
+  const [selectedSaleId, setSelectedSaleId] = useState(null);
+  const { getSales, deleteSale, updateSale, rows, setRows, fetchDataSales } = useFirebase();
 
-  const handleSearchChange = (event) => {
-    setSearchValue(event.target.value);
-    const filteredRows = rows.filter((row) =>
-      Object.values(row).some((value) =>
-        value.toString().toLowerCase().includes(event.target.value.toLowerCase())
-      )
-    );
-    setRows(filteredRows);
+  const handleOpenUpdateModal = (saleId) => {
+    setSelectedSaleId(saleId);
   };
 
   useEffect(() => {
-    fetchData();
+    fetchDataSales();
   }, []); 
 
   const handleDeleteSelected = async () => {
-    await deleteSale(selectedRows)
+    await deleteSale(selectedRows).then(async() => {
+      await fetchDataSales()
+    })
     console.log("Linhas selecionadas:", selectedRows);
   };
 
+  const columns = [
+    { field: 'id', headerName: 'ID', width: 90 },
+    { field: 'clientName', headerName: 'Cliente', width: 150 },
+    { field: 'productName', headerName: 'Produto', width: 150 },
+    { field: 'date', headerName: 'Data', width: 110 },
+    { field: 'totalAmount', headerName: 'Quantidade', width: 110 },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 150,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={(event) => {
+            event.stopPropagation(); // Prevents row selection
+            handleOpenUpdateModal(params.row.id);
+          }}
+        >
+          Update
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <Box sx={{ height: 400, width: '100%' }}>
-      <TextField
-        label="Search"
-        value={searchValue}
-        onChange={handleSearchChange}
-        variant="outlined"
-        margin="normal"
-      />
-      <SalesModal/>
+      <SalesModal />
       <Button variant="contained" onClick={handleDeleteSelected}>
         Delete Selected
       </Button>
@@ -68,6 +70,14 @@ export function TableSales() {
           console.log(newSelection);
         }}
       />
+      {selectedSaleId && (
+        <SaleUpdateModal
+          key={selectedSaleId}
+          sale={rows.find((row) => row.id === selectedSaleId)}
+          updateSale={updateSale}
+          onClose={() => setSelectedSaleId(null)}
+        />
+      )}
     </Box>
   );
 }

@@ -16,7 +16,17 @@ const FirebaseProvider = ({children}) => {
     async function fetchData() {
         const customers = await getCustomers();
         setRows(customers);
-      }
+    }
+
+    async function fetchDataSales() {
+        const sales = await getSales();
+        setRows(sales);
+    }
+
+    async function fetchDataProducts() {
+        const products = await getProducts();
+        setRows(products);
+    }
 
     async function getCustomers() {
         try {
@@ -93,11 +103,18 @@ const FirebaseProvider = ({children}) => {
         }
     }
 
-    async function updateProduct() {
+    async function updateProduct(productId, updatedData) {
         try {
-
+            const q = query(collection(db, 'Products'), where('id', '==', productId)); // Consulta para encontrar documentos com o ID correspondente
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach(async (doc) => {
+                console.log(doc.ref)
+                await updateDoc(doc.ref, updatedData);
+                console.log(`Produto com ID ${productId} alterado com sucesso.`);
+            });
+            return
         } catch (error) {
-            console.error('Erro ao cadastrar clientes:', error);
+            console.error('Erro ao cadastrar produtos:', error);
             throw error;
         }
     }
@@ -124,9 +141,9 @@ const FirebaseProvider = ({children}) => {
     async function getSales() {
         try {
             const saleSnapshot = await getDocs(salesCol);
-        const salesList = saleSnapshot.docs.map(doc => doc.data());
+            const salesList = saleSnapshot.docs.map(doc => doc.data());
             return salesList;
-        } catch {
+        } catch (error) {
             console.error('Erro ao obter as vendas:', error);
             throw error;
         }
@@ -141,9 +158,16 @@ const FirebaseProvider = ({children}) => {
         }
     }
 
-    async function updateSale() {
+    async function updateSale(saleId, updatedData) {
         try {
-
+            const q = query(collection(db, 'Sales'), where('id', '==', saleId)); // Consulta para encontrar documentos com o ID correspondente
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach(async (doc) => {
+                console.log(doc.ref)
+                await updateDoc(doc.ref, updatedData);
+                console.log(`A venda com ID ${saleId} alterado com sucesso.`);
+            });
+            return
         } catch (error) {
             console.error('Erro ao cadastrar clientes:', error);
             throw error;
@@ -185,7 +209,9 @@ const FirebaseProvider = ({children}) => {
           deleteSale,
           rows,
           setRows,
-          fetchData
+          fetchData,
+          fetchDataSales,
+          fetchDataProducts
             }}>
             {children}
         </FirebaseContext.Provider>

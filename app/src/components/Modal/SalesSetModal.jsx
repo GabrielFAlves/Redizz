@@ -20,7 +20,7 @@ const style = {
 
 export default function SalesModal() {
 
-  const {setSale} = useFirebase()
+  const {setSale, fetchDataSales} = useFirebase()
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -28,7 +28,7 @@ export default function SalesModal() {
 
   // Estados para armazenar os valores do formulário
   const [formData, setFormData] = useState({
-    id: parseInt(Math.random()*10).toFixed(0),
+    id: Math.floor(Math.random() * 1001),
     clientName: '',
     productName: '',
     date: '',
@@ -42,9 +42,18 @@ export default function SalesModal() {
   };
 
   // Função para lidar com o envio do formulário
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Aqui você pode realizar a lógica necessária com os dados do formulário
-    setSale(formData)
+    await setSale(formData).then(async() => {
+      await fetchDataSales()
+      setFormData({
+        id: Math.floor(Math.random() * 1001),
+        clientName: '',
+        productName: '',
+        date: '',
+        totalAmount: '',
+      })
+    })
 
     // Fechar o modal após o envio do formulário
     handleClose();
