@@ -20,7 +20,7 @@ const style = {
 
 export default function CustomersModal() {
 
-  const {setCustomer} = useFirebase()
+  const {setCustomer, fetchData} = useFirebase()
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -42,9 +42,11 @@ export default function CustomersModal() {
   };
 
   // Função para lidar com o envio do formulário
-  const handleSubmit = () => {
-    // Chama a função saveData do contexto Firebase e passa os dados do formulário
-    setCustomer(formData)
+  const handleSubmit = async () => {
+    
+    await setCustomer(formData).then(async() => {
+      await fetchData()
+    })
 
     // Fechar o modal após o envio do formulário
     handleClose();

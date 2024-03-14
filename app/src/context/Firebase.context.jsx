@@ -7,9 +7,16 @@ FirebaseContext.displayName = 'FirebaseContext';
 
 const FirebaseProvider = ({children}) => {
 
+    const [rows, setRows] = useState([]);
+
     const customersCol = collection(db, 'Customers');
     const productsCol = collection(db, 'Products');
     const salesCol = collection(db, 'Sales');
+
+    async function fetchData() {
+        const customers = await getCustomers();
+        setRows(customers);
+      }
 
     async function getCustomers() {
         try {
@@ -31,15 +38,22 @@ const FirebaseProvider = ({children}) => {
         }
     }
 
-    async function updateCustomer() {
+    async function updateCustomer(customerId, updatedData) {
         try {
-
+            const q = query(collection(db, 'Customers'), where('id', '==', customerId)); // Consulta para encontrar documentos com o ID correspondente
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach(async (doc) => {
+                console.log(doc.ref)
+                await updateDoc(doc.ref, updatedData);
+                console.log(`Cliente com ID ${customerId} alterado com sucesso.`);
+            });
+            return
         } catch (error) {
-            console.error('Erro ao cadastrar clientes:', error);
+            console.error('Erro ao atualizar cliente:', error);
             throw error;
         }
     }
-
+    
     async function deleteCustomer(customerIds) {
         try {
             for (let i = 0; i < customerIds.length; i++) {
@@ -168,7 +182,10 @@ const FirebaseProvider = ({children}) => {
           getSales,
           setSale,
           updateSale,
-          deleteSale
+          deleteSale,
+          rows,
+          setRows,
+          fetchData
             }}>
             {children}
         </FirebaseContext.Provider>

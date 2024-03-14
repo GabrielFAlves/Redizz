@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
-import SalesModal from '../Modal/SalesModal';
+import SalesModal from '../Modal/SalesSetModal';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { useFirebase } from '../../context/firebase.context';

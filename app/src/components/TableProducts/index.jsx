@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import ProductsModal from '../Modal/ProductsModal';
+import ProductsModal from '../Modal/ProductsSetModal';
 import { useFirebase } from '../../context/firebase.context';
 
 const columns = [
