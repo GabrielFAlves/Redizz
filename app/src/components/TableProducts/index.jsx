@@ -1,29 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import ProductsModal from '../Modal/ProductsModal';
+import { useFirebase } from '../../context/firebase.context';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
-  { field: 'nome', headerName: 'Nome', width: 150, editable: true },
-  { field: 'categoria', headerName: 'Categoria', width: 150, editable: true },
-  { field: 'valor', headerName: 'Valor', type: 'number', width: 110, editable: true },
-  { field: 'qtdEstoque', headerName: 'Quantidade', type: 'number', width: 110, editable: true }
-];
-
-const rows = [
-  { id: 1, nome: 'Caneta', categoria: 'Material escolar', valor: 14 , qtdEstoque: '5'},
-  { id: 2, nome: 'Borracha', categoria: 'Material escolar', valor: 31 , qtdEstoque: '5'},
-  { id: 3, nome: 'Caderno', categoria: 'Material escolar', valor: 31 , qtdEstoque: '5'},
-  { id: 4, nome: 'Apostila', categoria: 'Material escolar', valor: 11 , qtdEstoque: '5'},
-  { id: 5, nome: 'Celular', categoria: 'Eletrônico', valor: 1300 , qtdEstoque: '5'}
+  { field: 'productName', headerName: 'Nome', width: 150, editable: true },
+  { field: 'category', headerName: 'Categoria', width: 150, editable: true },
+  { field: 'value', headerName: 'Valor', type: 'number', width: 110, editable: true },
+  { field: 'quantity', headerName: 'Quantidade', type: 'number', width: 110, editable: true }
 ];
 
 export function TableProducts() {
+  const [selectedRows, setSelectedRows] = useState([]);
   const [searchValue, setSearchValue] = useState('');
-  const [rowsState, setRows] = useState(rows); // Renomeie rows para evitar conflito de nomes
+  const [rows, setRows] = useState([]);
+  const { getProducts, deleteProduct } = useFirebase();
+
+  async function fetchData() {
+    const products = await getProducts();
+    setRows(products);
+  }
 
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
@@ -33,6 +33,15 @@ export function TableProducts() {
       )
     );
     setRows(filteredRows);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []); 
+
+  const handleDeleteSelected = async () => {
+    await deleteProduct(selectedRows)
+    console.log("Linhas selecionadas:", selectedRows);
   };
 
   return (
@@ -45,22 +54,19 @@ export function TableProducts() {
         margin="normal"
       />
       <ProductsModal/>
-      <Button variant="contained">
+      <Button variant="contained" onClick={handleDeleteSelected}>
         Delete Selected
       </Button>
       <DataGrid
-        rows={rowsState}
+        rows={rows}
         columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
-        }}
-        pageSizeOptions={[5]}
+        pageSize={5}
         checkboxSelection
-        disableRowSelectionOnClick
+        disableSelectionOnClick // Use essa propriedade ao invés de disableRowSelectionOnClick
+        onRowSelectionModelChange={(newSelection) => {
+          setSelectedRows(newSelection);
+          console.log(newSelection);
+        }}
       />
     </Box>
   );

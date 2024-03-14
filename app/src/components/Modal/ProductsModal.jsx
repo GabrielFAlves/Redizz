@@ -1,9 +1,10 @@
-import * as React from 'react';
+import React, { useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
+import { useFirebase } from '../../context/firebase.context';
 
 const style = {
   position: 'absolute',
@@ -18,12 +19,16 @@ const style = {
 };
 
 export default function ProductsModal() {
-  const [open, setOpen] = React.useState(false);
+
+  const {setProduct} = useFirebase()
+
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   // Estados para armazenar os valores do formulário
-  const [formData, setFormData] = React.useState({
+  const [formData, setFormData] = useState({
+    id: parseInt(Math.random()*10).toFixed(0),
     productName: '',
     category: '',
     value: '',
@@ -39,7 +44,7 @@ export default function ProductsModal() {
   // Função para lidar com o envio do formulário
   const handleSubmit = () => {
     // Aqui você pode realizar a lógica necessária com os dados do formulário
-    console.log('Formulário enviado:', formData);
+    setProduct(formData)
 
     // Fechar o modal após o envio do formulário
     handleClose();
