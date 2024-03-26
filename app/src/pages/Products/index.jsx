@@ -4,7 +4,7 @@ export const Products = () => {
     return (
         <>
         <h1>Products</h1>
-            <TableProducts id='products'/>
+            <TableProducts/>
         </>
     )
 }
